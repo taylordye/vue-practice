@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="/public/styles.css">
+    <title>Vue Quick n Dirty!</title>
+</head>
+<body class="bg-purple-600 bg-opacity-25 container mx-auto text-center flex flex-col font-mono">
+    
+    <div id="app">
+        <header>
+            <nav class="flex justify-around">
+                <h1 class="text-3xl justify-start">ShitForSale</h1>
+                <ul class="flex justify-end">
+                    <li class="p-3">About</li>
+                    <li class="p-3">Pricing</li>
+                    <li class="p-3">{{ ethPrice }}</li>
+                </ul>
+            </nav>
+        </header>
+
+        <ol>
+            <li v-for='(product, index) in products' :v-key='index' class="m-4">
+                {{ product }}
+            </li>
+
+            <input type="text" class="m-8" v-model="item">
+            <button @click.prevent()='addToList(item)' class="bg-green-500 rounded shadow-xl text-white text-semibold py-2 px-4">Add to List</button>
+        </ol>
+
+        <button v-if="seen" @click.prevent='hideMessage' class="bg-red-500 rounded shadow-xl text-white text-semibold py-2 px-4">Click me!</button>
+
+    </div>
+
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                products: ['Boots', 'Shorts', 'Hats', 'Socks', "Tent"],
+                seen: true,
+                item: '',
+                ethPrice: '',
+            },
+
+            // Methods to call once the app is instantiated
+            created: async function () {
+                fetch("https://api.coindesk.com/v1/bpi/currentprice.json", {
+                })
+                .then((res) => {
+                    this.ethPrice = res.data;
+                    console.log(this.ethPrice);
+                })
+            },
+
+            // Methods
+            methods: {
+                hideMessage: function () {
+                    this.seen = false;
+                },
+
+                addToList: function (item) {
+                    this.products.push(item);
+                    this.item = '';
+                }
+            },
+        });
+    </script>
+</body>
+</html>
